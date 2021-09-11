@@ -294,7 +294,7 @@ public class DndPdf {
     }
 
     public DndPdf setAcrobatics(){
-        this.setSkill(DndField.);
+        //TODO
         return this;
     }
 
