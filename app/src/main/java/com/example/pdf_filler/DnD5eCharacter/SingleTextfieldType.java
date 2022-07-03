@@ -1,13 +1,14 @@
-package com.example.pdf_filler.DnD5eCharacter.description;
+package com.example.pdf_filler.DnD5eCharacter;
 
-abstract class SingleTextfieldType {
+public abstract class SingleTextfieldType {
     private String text;
 
     public SingleTextfieldType(String text){
         this.text = text;
     }
 
-    public String getText(){
+    @Override
+    public String toString(){
         return this.text;
     }
 

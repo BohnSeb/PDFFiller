@@ -6,6 +6,7 @@ public class Progression {
 
     public Progression(XP xp){
         this.xp = xp;
+        this.lvl = calculateLevelFromXP(this.xp);
     }
 
     public Progression(Level lvl){
@@ -79,4 +80,6 @@ public class Progression {
         if (lvl >= 5){return 3;}
         return 2;
     }
+
+    public int getLevel(){return this.lvl.getLvl();}
 }

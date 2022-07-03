@@ -1,5 +1,6 @@
 package com.example.pdf_filler;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 //import android.graphics.pdf.PdfDocument;
@@ -7,27 +8,40 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.provider.DocumentsContract;
 import android.renderscript.ScriptGroup;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.itextpdf.forms.PdfAcroForm;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MainActivity extends AppCompatActivity {
     EditText et;
@@ -46,7 +60,9 @@ public class MainActivity extends AppCompatActivity {
         et = (EditText) findViewById(R.id.editText);
         et.setText("Billy is Kacke");
 
-        String l_assetName = "DD.pdf";
+        openFile();
+
+        /*String l_assetName = "DD.pdf";
 
         DndPdf l_dndPdf = new DndPdf(getApplicationContext());
         l_dndPdf.setCharacterName("Testie, der Testende, der unfassbare, der unbeschreibliche Testinger");
@@ -88,7 +104,15 @@ public class MainActivity extends AppCompatActivity {
                 //md.draw(dir);
                 Toast.makeText(getApplicationContext(), "Saved File in Downloads Folder", Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
+    }
+
+    private void openFile(){
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        //intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("application/octet-stream");
+
+        startActivityForResult(intent, 2);
     }
 
     public void savePdf(String filename){
@@ -103,7 +127,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == DndPdf.NEW_FILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) ;
+        System.out.println("Received Data");
+        if (requestCode == 2 && resultCode == Activity.RESULT_OK){
+            Uri content_describer = data.getData();
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(content_describer);
+                byte[] buffer = new byte[inputStream.available()];
+                inputStream.read(buffer);
+                String content = new String(buffer, StandardCharsets.UTF_8);
+                System.out.println("Data: " + content);
+                //extract json object
+                JSONObject json_content = new JSONObject(content);
+                System.out.println(json_content);
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        /*if (requestCode == DndPdf.NEW_FILE_REQUEST_CODE && resultCode == Activity.RESULT_OK) ;
         {
             Uri l_uri = data.getData();
             try {
@@ -121,6 +161,6 @@ public class MainActivity extends AppCompatActivity {
                 System.err.println(e.getMessage());
                 e.printStackTrace();
             }
-        }
+        }*/
     }
 }

@@ -14,4 +14,9 @@ public class XP {
     public void setXp(int xp) {
         this.xp = xp;
     }
+
+    @Override
+    public String toString(){
+        return Integer.toString(this.xp);
+    }
 }
